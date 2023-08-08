@@ -16,7 +16,7 @@ from docx import Document
 load_dotenv()
 
 # Set up OpenAI API
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Read data from file
 def read_data(file, file_type):
