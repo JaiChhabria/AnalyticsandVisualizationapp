@@ -7,16 +7,17 @@ from PIL import Image
 import openai
 import os
 from dotenv import load_dotenv
-from summarizer import TransformerSummarizer
+from summarizer import Summarizer
 import docx2txt
 from transformers import AlbertModel
+from transformers import BartTokenizer, BartForConditionalGeneration
 from docx import Document 
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Set up OpenAI API
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Read data from file
 def read_data(file, file_type):
@@ -28,8 +29,13 @@ def read_data(file, file_type):
 
 # Generate automatic summary using BERT Extractive Summarizer
 def generate_text_summary(text, word_limit=100):
-    model = TransformerSummarizer()
-    summary = model(text, num_sentences=word_limit // 10)  # Approximate number of sentences based on the word limit
+    tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-cnn')
+    model = BartForConditionalGeneration.from_pretrained('facebook/bart-large-cnn')
+    
+    inputs = tokenizer(text, max_length=1024, return_tensors='pt', truncation=True)
+    summary_ids = model.generate(inputs.input_ids, max_length=word_limit, num_beams=4, early_stopping=True)
+    summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+    
     return summary
 
 # Function to perform data summarization for CSV and Excel files
