@@ -7,7 +7,7 @@ from PIL import Image
 import openai
 import os
 from dotenv import load_dotenv
-from summarizer import Summarizer
+from summarizer import TransformerSummarizer
 import docx2txt
 from transformers import AlbertModel
 from docx import Document 
@@ -28,7 +28,7 @@ def read_data(file, file_type):
 
 # Generate automatic summary using BERT Extractive Summarizer
 def generate_text_summary(text, word_limit=100):
-    model = Summarizer()
+    model = TransformerSummarizer()
     summary = model(text, num_sentences=word_limit // 10)  # Approximate number of sentences based on the word limit
     return summary
 
