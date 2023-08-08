@@ -13,8 +13,8 @@ pandas
 wordcloud
 textblob
 python-docx
-Summarizer
+summarizer
 transformers
 docx2txt
-summarizer
+Summarizer
 docx
