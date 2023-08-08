@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from summarizer import Summarizer
 import docx2txt
 from transformers import AlbertModel
+from docx import Document 
 
 # Load environment variables from .env file
 load_dotenv()
@@ -26,16 +27,23 @@ def read_data(file, file_type):
     return df
 
 # Generate automatic summary using BERT Extractive Summarizer
-def generate_summary(text, word_limit=100):
+def generate_text_summary(text, word_limit=100):
     model = Summarizer()
     summary = model(text, num_sentences=word_limit // 10)  # Approximate number of sentences based on the word limit
+    return summary
+
+# Function to perform data summarization for CSV and Excel files
+def generate_data_summary(data):
+    # Add your data summarization logic here
+    # Example: Calculate statistics, create charts, etc.
+    summary = "Data summarization result goes here."
     return summary
 
 # Redact personal information from text
 def redact_personal_info(text):
     # Replace personal info with [REDACTED]
-    redacted_text = text.replace("John Doe", "[REDACTED]")
-    redacted_text = redacted_text.replace("johndoe@example.com", "[REDACTED]")
+    redacted_text = text.replace("John Doe", "[REDACTED]","Vedika Chhabria","[REDACTED]")
+    redacted_text = redacted_text.replace("vedikachharbia@gmail.com", "[REDACTED]")
     # Add more redactions as needed
     return redacted_text
 
@@ -99,7 +107,7 @@ def main():
             df = read_data(uploaded_file, file_type)
             
             st.subheader("Data Summary")
-            automatic_summary = generate_summary(df.to_string())
+            automatic_summary = generate_data_summary(df)
             st.write(automatic_summary)
             
             st.subheader("Ask a Question")
@@ -127,25 +135,17 @@ def main():
             # Include the code for other chart types (Line, Pie, Heat Map) here
         
         elif file_type == "docx":
-            # Extract text from uploaded Word document
-            doc_text = docx2txt.process(uploaded_file)
+            # Load text from docx file
+            doc = Document(uploaded_file)
+            doc_text = "\n".join([para.text for para in doc.paragraphs])
             
-            st.subheader("Summarized and Redacted Text")
-            
-            # Get user's preferred summary length
-            summary_length = st.number_input("Enter the number of words for summary:", value=100)
-            
-            # Summarize the extracted text with the specified length
-            summarized_text = generate_summary(doc_text, word_limit=summary_length)
-            
-            # Redact personal information from the summarized text
-            redacted_text = redact_personal_info(summarized_text)
-            
-            # Display the summarized and redacted text
-            st.write(redacted_text)
+            st.subheader("Text Summarization")
+            user_word_limit = st.number_input("Enter word limit for summary:", value=100)
+            text_summary = generate_text_summary(doc_text, word_limit=user_word_limit)
+            st.write(text_summary)
             
             st.subheader("Word Cloud")
-            word_cloud_plot = create_word_cloud(redacted_text)
+            word_cloud_plot = create_word_cloud(text_summary)
             st.pyplot(word_cloud_plot)
 
 # Run the app
