@@ -18,5 +18,4 @@ transformers
 docx2txt
 summarizer
 docx
-PyTorch
-torch
+
