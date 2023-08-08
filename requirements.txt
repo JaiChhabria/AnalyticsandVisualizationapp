@@ -16,3 +16,4 @@ python-docx
 Summarizer
 transformers
 docx2txt
+summarizer
