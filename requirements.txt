@@ -18,4 +18,6 @@ transformers
 docx2txt
 summarizer
 docx
-
+torch
+torchvision
+torchaudio
