@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from summarizer import Summarizer
 import docx2txt
 from transformers import AlbertModel
-from transformers import BartTokenizer, BartForConditionalGeneration
+from transformers import BartTokenizer, BartForConditionalGeneration, BertForSequenceClassification
 from docx import Document 
 
 # Load environment variables from .env file
@@ -30,6 +30,7 @@ def read_data(file, file_type):
 # Generate automatic summary using BERT Extractive Summarizer
 def generate_text_summary(text, word_limit=100):
     tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-cnn')
+    local_model_path = "C:\Users\jaich\OneDrive\LLM_Project_Personal"
     model = BartForConditionalGeneration.from_pretrained('facebook/bart-large-cnn')
     
     inputs = tokenizer(text, max_length=1024, return_tensors='pt', truncation=True)
